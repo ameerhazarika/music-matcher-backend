@@ -16,7 +16,7 @@ import java.util.*;
 public class AuthController {
 
     @Value("${spotify.client-id}")
-    private String clientId;
+    private String clientId; // client id
 
     @Value("${spotify.client-secret}")
     private String clientSecret;
