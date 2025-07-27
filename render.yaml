@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: spring-boot-app
+    env: java
+    plan: free
+    buildCommand: chmod +x mvnw && ./mvnw clean install && mv target/*.jar target/app.jar
+    startCommand: java -jar target/app.jar
+    envVars:
+      - key: JAVA_VERSION
+        value: 17
