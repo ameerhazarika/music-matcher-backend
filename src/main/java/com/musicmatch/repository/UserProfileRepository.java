@@ -1,6 +1,7 @@
 package com.musicmatch.repository;
 
 import com.musicmatch.model.UserProfile;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.Optional;
 
