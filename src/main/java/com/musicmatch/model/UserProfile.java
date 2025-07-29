@@ -1,24 +1,88 @@
 package com.musicmatch.model;
 
-import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import java.util.List;
 
-@Document("users")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+import java.time.Instant;
+
+@Document(collection = "spotify_users")
 public class UserProfile {
-    @Id
-    private String id;
-    private String spotifyId;
-    private String name;
-    private String email;
-    private String profileImageUrl;
 
-    private List<String> topArtists;
-    private List<String> topGenres;
-    private List<String> topTracks;
+    @Id
+    private String id;  // MongoDB's internal ID
+
+    private String spotifyId;
+    private String displayName;
+    private String email;
+    private String profileImage;
+
+    private String accessToken;
+    private String refreshToken;
+    private Instant tokenExpiry;
+
+    // Getters and setters
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getSpotifyId() {
+        return spotifyId;
+    }
+
+    public void setSpotifyId(String spotifyId) {
+        this.spotifyId = spotifyId;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public Instant getTokenExpiry() {
+        return tokenExpiry;
+    }
+
+    public void setTokenExpiry(Instant tokenExpiry) {
+        this.tokenExpiry = tokenExpiry;
+    }
 }
