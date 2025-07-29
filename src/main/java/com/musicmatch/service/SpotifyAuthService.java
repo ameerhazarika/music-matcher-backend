@@ -3,6 +3,8 @@ package com.musicmatch.service;
 import com.musicmatch.model.UserProfile;
 import com.musicmatch.payload.response.SpotifyTokenResponse;
 import com.musicmatch.repository.UserProfileRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,8 @@ import java.util.Optional;
 
 @Service
 public class SpotifyAuthService {
+
+    private static final Logger logger = LoggerFactory.getLogger(SpotifyAuthService.class);
 
     @Value("${spotify.client-id}")
     private String clientId;
@@ -36,13 +40,23 @@ public class SpotifyAuthService {
     }
 
     public UserProfile authenticateUser(String code) {
-        SpotifyTokenResponse tokenResponse = exchangeCodeForToken(code);
-        Map<String, Object> profileData = fetchUserProfile(tokenResponse.getAccessToken());
+        logger.info("Starting authentication flow for code: {}", code);
 
-        return saveOrUpdateUserProfile(tokenResponse, profileData);
+        SpotifyTokenResponse tokenResponse = exchangeCodeForToken(code);
+        logger.debug("Token response received: {}", tokenResponse);
+
+        Map<String, Object> profileData = fetchUserProfile(tokenResponse.getAccessToken());
+        logger.debug("Fetched Spotify user profile: {}", profileData);
+
+        UserProfile savedProfile = saveOrUpdateUserProfile(tokenResponse, profileData);
+        logger.info("User profile saved/updated with ID: {}", savedProfile.getSpotifyId());
+
+        return savedProfile;
     }
 
     private SpotifyTokenResponse exchangeCodeForToken(String code) {
+        logger.info("Exchanging authorization code for access token...");
+
         String tokenUrl = "https://accounts.spotify.com/api/token";
 
         HttpHeaders headers = new HttpHeaders();
@@ -60,11 +74,14 @@ public class SpotifyAuthService {
             ResponseEntity<SpotifyTokenResponse> response = restTemplate.postForEntity(tokenUrl, request, SpotifyTokenResponse.class);
             return response.getBody();
         } catch (HttpClientErrorException e) {
-            throw new RuntimeException("Failed to exchange code for token: " + e.getResponseBodyAsString(), e);
+            logger.error("Failed to exchange code for token: {}", e.getResponseBodyAsString(), e);
+            throw new RuntimeException("Failed to exchange code for token", e);
         }
     }
 
     private Map<String, Object> fetchUserProfile(String accessToken) {
+        logger.info("Fetching user profile from Spotify API...");
+
         String url = "https://api.spotify.com/v1/me";
 
         HttpHeaders headers = new HttpHeaders();
@@ -75,7 +92,8 @@ public class SpotifyAuthService {
             ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
             return response.getBody();
         } catch (HttpClientErrorException e) {
-            throw new RuntimeException("Failed to fetch Spotify user profile: " + e.getResponseBodyAsString(), e);
+            logger.error("Failed to fetch Spotify user profile: {}", e.getResponseBodyAsString(), e);
+            throw new RuntimeException("Failed to fetch Spotify user profile", e);
         }
     }
 
