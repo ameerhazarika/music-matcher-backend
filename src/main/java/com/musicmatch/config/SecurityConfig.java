@@ -23,7 +23,11 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/callback", "/oauth2/**").permitAll()
+                        .requestMatchers(
+                                "/api/auth/login",
+                                "/api/auth/callback",
+                                "/oauth2/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 );
 
