@@ -1,6 +1,6 @@
 package com.musicmatch.security.services;
 
-import com.musicmatch.model.UserProfile;
+import com.musicmatch.model.User;
 import com.musicmatch.repository.UserProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +16,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String spotifyId) throws UsernameNotFoundException {
-        UserProfile user = userRepository.findBySpotifyId(spotifyId)
+        User user = userRepository.findBySpotifyId(spotifyId)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with spotifyId: " + spotifyId));
 
         return new UserDetailsImpl(user);

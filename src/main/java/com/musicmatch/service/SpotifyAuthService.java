@@ -1,6 +1,6 @@
 package com.musicmatch.service;
 
-import com.musicmatch.model.UserProfile;
+import com.musicmatch.model.User;
 import com.musicmatch.payload.response.SpotifyTokenResponse;
 import com.musicmatch.repository.UserProfileRepository;
 import org.slf4j.Logger;
@@ -39,7 +39,7 @@ public class SpotifyAuthService {
         this.userProfileRepository = userProfileRepository;
     }
 
-    public UserProfile authenticateUser(String code) {
+    public User authenticateUser(String code) {
         logger.info("Starting authentication flow for code: {}", code);
 
         SpotifyTokenResponse tokenResponse = exchangeCodeForToken(code);
@@ -48,7 +48,7 @@ public class SpotifyAuthService {
         Map<String, Object> profileData = fetchUserProfile(tokenResponse.getAccessToken());
         logger.debug("Fetched Spotify user profile: {}", profileData);
 
-        UserProfile savedProfile = saveOrUpdateUserProfile(tokenResponse, profileData);
+        User savedProfile = saveOrUpdateUserProfile(tokenResponse, profileData);
         logger.info("User profile saved/updated with ID: {}", savedProfile.getSpotifyId());
 
         return savedProfile;
@@ -97,7 +97,7 @@ public class SpotifyAuthService {
         }
     }
 
-    private UserProfile saveOrUpdateUserProfile(SpotifyTokenResponse tokenResponse, Map<String, Object> profileData) {
+    private User saveOrUpdateUserProfile(SpotifyTokenResponse tokenResponse, Map<String, Object> profileData) {
         String spotifyId = (String) profileData.get("id");
         String displayName = (String) profileData.get("display_name");
         String email = (String) profileData.get("email");
@@ -105,9 +105,9 @@ public class SpotifyAuthService {
         List<Map<String, Object>> images = (List<Map<String, Object>>) profileData.get("images");
         String profileImage = (images != null && !images.isEmpty()) ? (String) images.get(0).get("url") : null;
 
-        Optional<UserProfile> existingUserOpt = userProfileRepository.findBySpotifyId(spotifyId);
+        Optional<User> existingUserOpt = userProfileRepository.findBySpotifyId(spotifyId);
 
-        UserProfile userProfile = existingUserOpt.orElse(new UserProfile());
+        User userProfile = existingUserOpt.orElse(new User());
         userProfile.setSpotifyId(spotifyId);
         userProfile.setDisplayName(displayName);
         userProfile.setEmail(email);

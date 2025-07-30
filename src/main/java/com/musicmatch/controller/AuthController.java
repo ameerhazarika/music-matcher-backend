@@ -1,12 +1,11 @@
 package com.musicmatch.controller;
 
-import com.musicmatch.model.UserProfile;
+import com.musicmatch.model.User;
 import com.musicmatch.payload.response.JwtResponse;
 import com.musicmatch.security.jwt.JwtUtils;
 import com.musicmatch.service.SpotifyAuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -67,7 +65,7 @@ public class AuthController {
     @GetMapping("/callback")
     public ResponseEntity<?> callback(@RequestParam String code) {
         try {
-            UserProfile userProfile = spotifyAuthService.authenticateUser(code);
+            User userProfile = spotifyAuthService.authenticateUser(code);
             String jwt = jwtUtils.generateJwtFromSpotifyId(userProfile.getSpotifyId());
             JwtResponse jwtResponse = new JwtResponse(jwt, userProfile.getDisplayName(), userProfile.getEmail());
             return ResponseEntity.ok(jwtResponse);

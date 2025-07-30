@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.Instant;
 
 @Document(collection = "spotify_users")
-public class UserProfile {
+public class User {
 
     @Id
     private String id;  // MongoDB's internal ID

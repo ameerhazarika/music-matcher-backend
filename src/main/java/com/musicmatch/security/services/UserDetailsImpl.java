@@ -1,6 +1,6 @@
 package com.musicmatch.security.services;
 
-import com.musicmatch.model.UserProfile;
+import com.musicmatch.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -9,13 +9,13 @@ import java.util.Collections;
 
 public class UserDetailsImpl implements UserDetails {
 
-    private final UserProfile user;
+    private final User user;
 
-    public UserDetailsImpl(UserProfile user) {
+    public UserDetailsImpl(User user) {
         this.user = user;
     }
 
-    public UserProfile getUser() {
+    public User getUser() {
         return user;
     }
 
