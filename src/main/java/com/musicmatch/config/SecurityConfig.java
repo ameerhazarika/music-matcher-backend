@@ -25,7 +25,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/auth/login",
-                                "/api/auth/callback",
+                                "/api/auth/callback","api/user/profile",
                                 "/oauth2/**"
                         ).permitAll()
                         .anyRequest().authenticated()

@@ -63,14 +63,37 @@ public class AuthController {
     }
 
     @GetMapping("/callback")
-    public ResponseEntity<?> callback(@RequestParam String code) {
+    public ResponseEntity<Void> callback(@RequestParam String code) {
         try {
             User userProfile = spotifyAuthService.authenticateUser(code);
             String jwt = jwtUtils.generateJwtFromSpotifyId(userProfile.getSpotifyId());
-            JwtResponse jwtResponse = new JwtResponse(jwt, userProfile.getDisplayName(), userProfile.getEmail());
-            return ResponseEntity.ok(jwtResponse);
+
+            String redirectUrl = UriComponentsBuilder
+                    .fromUriString("http://localhost:3000/callback") // Replace with your actual frontend URL in prod
+                    .queryParam("token", jwt)
+                    .queryParam("displayName", userProfile.getDisplayName())
+                    .queryParam("email", userProfile.getEmail())
+                    .build(true)
+                    .toUriString();
+
+            logger.info("Redirecting to frontend with token: {}", redirectUrl);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setLocation(URI.create(redirectUrl));
+            return new ResponseEntity<>(headers, HttpStatus.FOUND);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Authentication failed: " + e.getMessage());
+            logger.error("Authentication failed", e);
+
+            String errorRedirect = UriComponentsBuilder
+                    .fromUriString("http://localhost:3000/error")
+                    .queryParam("message", "Authentication failed")
+                    .build(true)
+                    .toUriString();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setLocation(URI.create(errorRedirect));
+            return new ResponseEntity<>(headers, HttpStatus.FOUND);
         }
     }
+
 }
