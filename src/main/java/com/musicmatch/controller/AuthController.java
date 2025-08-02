@@ -69,7 +69,7 @@ public class AuthController {
             String jwt = jwtUtils.generateJwtFromSpotifyId(userProfile.getSpotifyId());
 
             String redirectUrl = UriComponentsBuilder
-                    .fromUriString("http://localhost:3000/callback") // Replace with your actual frontend URL in prod
+                    .fromUriString("http://localhost:5173/auth/callback") // Replace with your actual frontend URL in prod
                     .queryParam("token", jwt)
                     .queryParam("displayName", userProfile.getDisplayName())
                     .queryParam("email", userProfile.getEmail())
