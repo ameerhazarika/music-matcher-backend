@@ -15,7 +15,7 @@
 .mtj.tmp/
 
 # Package Files #
-*.jar
+#*.jar
 *.war
 *.nar
 *.ear
@@ -27,6 +27,8 @@
 hs_err_pid*
 replay_pid*
 
+# deploy
+deploy/
 ### Maven ###
 target/
 pom.xml.tag
