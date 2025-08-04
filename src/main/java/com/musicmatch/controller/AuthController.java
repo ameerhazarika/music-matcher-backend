@@ -85,7 +85,7 @@ public class AuthController {
             logger.error("Authentication failed", e);
 
             String errorRedirect = UriComponentsBuilder
-                    .fromUriString("http://localhost:3000/error")
+                    .fromUriString("https://music-matcher-frontend.vercel.app/error")
                     .queryParam("message", "Authentication failed")
                     .build(true)
                     .toUriString();
