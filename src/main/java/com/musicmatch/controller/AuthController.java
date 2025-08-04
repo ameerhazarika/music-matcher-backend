@@ -65,6 +65,7 @@ public class AuthController {
     @GetMapping("/callback")
     public ResponseEntity<Void> callback(@RequestParam String code) {
         try {
+            logger.info("🔥 Inside /api/auth/callback with code: {}", code);
             User userProfile = spotifyAuthService.authenticateUser(code);
             String jwt = jwtUtils.generateJwtFromSpotifyId(userProfile.getSpotifyId());
 
