@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -87,7 +89,7 @@ public class AuthController {
 
             String errorRedirect = UriComponentsBuilder
                     .fromUriString("https://music-matcher-frontend.vercel.app/error")
-                    .queryParam("message", "Authentication failed")
+                    .queryParam("message", URLEncoder.encode("Authentication failed", StandardCharsets.UTF_8))
                     .build(true)
                     .toUriString();
 
