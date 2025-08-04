@@ -28,6 +28,15 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
+        String path = request.getRequestURI();
+
+        // Skip filtering for public routes
+        if (path.equals("/api/auth/login") || path.equals("/api/auth/callback")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         try {
             String jwt = parseJwt(request);
             if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
@@ -46,8 +55,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
-            // You can log or handle authentication failure here
-            logger.error("Cannot set user authentication: {}");
+            logger.error("Cannot set user authentication", e);
         }
 
         filterChain.doFilter(request, response);
