@@ -74,7 +74,7 @@ public class AuthController {
             String redirectUrl = UriComponentsBuilder
                     .fromUriString("https://music-matcher-frontend.vercel.app/auth/callback") // Replace with your actual frontend URL in prod
                     .queryParam("token", jwt)
-                    .queryParam("displayName", userProfile.getDisplayName())
+                    .queryParam("displayName", URLEncoder.encode(userProfile.getDisplayName(),StandardCharsets.UTF_8))
                     .queryParam("email", userProfile.getEmail())
                     .build(true)
                     .toUriString();
