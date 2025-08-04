@@ -1,0 +1,14 @@
+D:\dev\musicmatch\src\main\java\com\musicmatch\config\SecurityConfig.java
+D:\dev\musicmatch\src\main\java\com\musicmatch\controller\AuthController.java
+D:\dev\musicmatch\src\main\java\com\musicmatch\controller\UserController.java
+D:\dev\musicmatch\src\main\java\com\musicmatch\model\User.java
+D:\dev\musicmatch\src\main\java\com\musicmatch\musicmatch\MusicmatchApplication.java
+D:\dev\musicmatch\src\main\java\com\musicmatch\payload\response\JwtResponse.java
+D:\dev\musicmatch\src\main\java\com\musicmatch\payload\response\SpotifyTokenResponse.java
+D:\dev\musicmatch\src\main\java\com\musicmatch\repository\UserProfileRepository.java
+D:\dev\musicmatch\src\main\java\com\musicmatch\security\jwt\AuthTokenFilter.java
+D:\dev\musicmatch\src\main\java\com\musicmatch\security\jwt\JwtUtils.java
+D:\dev\musicmatch\src\main\java\com\musicmatch\security\services\UserDetailsImpl.java
+D:\dev\musicmatch\src\main\java\com\musicmatch\security\services\UserDetailsServiceImpl.java
+D:\dev\musicmatch\src\main\java\com\musicmatch\service\SpotifyAuthService.java
+D:\dev\musicmatch\src\main\java\com\musicmatch\service\UserService.java

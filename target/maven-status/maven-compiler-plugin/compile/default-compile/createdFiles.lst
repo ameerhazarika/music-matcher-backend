@@ -1,0 +1,14 @@
+com\musicmatch\controller\UserController.class
+com\musicmatch\controller\AuthController.class
+com\musicmatch\security\services\UserDetailsServiceImpl.class
+com\musicmatch\service\UserService.class
+com\musicmatch\security\jwt\JwtUtils.class
+com\musicmatch\security\jwt\AuthTokenFilter.class
+com\musicmatch\model\User.class
+com\musicmatch\config\SecurityConfig.class
+com\musicmatch\service\SpotifyAuthService.class
+com\musicmatch\payload\response\JwtResponse.class
+com\musicmatch\payload\response\SpotifyTokenResponse.class
+com\musicmatch\musicmatch\MusicmatchApplication.class
+com\musicmatch\repository\UserProfileRepository.class
+com\musicmatch\security\services\UserDetailsImpl.class
