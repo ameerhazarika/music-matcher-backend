@@ -72,7 +72,8 @@ public class AuthController {
             String jwt = jwtUtils.generateJwtFromSpotifyId(userProfile.getSpotifyId());
 
             String redirectUrl = UriComponentsBuilder
-                    .fromUriString("https://music-matcher-frontend.vercel.app/auth/callback") // Replace with your actual frontend URL in prod
+                  .fromUriString("https://music-matcher-frontend.vercel.app/auth/callback") // Replace with your actual frontend URL in prod
+                   // .fromUriString("http://localhost:5173//auth/callback") // Replace with your actual frontend URL in prod
                     .queryParam("token", jwt)
                     .queryParam("displayName", URLEncoder.encode(userProfile.getDisplayName(),StandardCharsets.UTF_8))
                     .queryParam("email", userProfile.getEmail())
