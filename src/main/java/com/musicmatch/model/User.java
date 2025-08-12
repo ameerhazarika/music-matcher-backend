@@ -4,6 +4,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.Map;
 
 @Document(collection = "spotify_users")
 public class User {
@@ -19,6 +21,7 @@ public class User {
     private String accessToken;
     private String refreshToken;
     private Instant tokenExpiry;
+    private List<Map<String, Object>> topTracks;
 
     // Getters and setters
 
@@ -84,5 +87,12 @@ public class User {
 
     public void setTokenExpiry(Instant tokenExpiry) {
         this.tokenExpiry = tokenExpiry;
+    }
+    public List<Map<String, Object>> getTopTracks() {
+        return topTracks;
+    }
+
+    public void setTopTracks(List<Map<String, Object>> topTracks) {
+        this.topTracks = topTracks;
     }
 }

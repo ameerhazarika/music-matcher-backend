@@ -324,4 +324,9 @@ public class SpotifyAuthService {
             throw new RuntimeException("Failed to refresh access token", e);
         }
     }
+    public void fetchAndSaveUserTopTracks(User user){
+        List<Map<String,Object>> topTracks = getUserTopTracks(user.getAccessToken());
+        user.setTopTracks(topTracks);
+        userProfileRepository.save(user);
+    }
 }

@@ -9,10 +9,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.sound.midi.Track;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.security.Principal;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/user")
@@ -58,6 +57,24 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Failed to fetch user profile");
         }
+    }
+    @GetMapping("/discover")
+    public ResponseEntity<List<User>> getAllOtherUsers(Authentication authentication) {
+        String spotifyId = authentication.getName();
+        List<User> allUsers = userProfileRepository.findBySpotifyIdNot(spotifyId);
+
+        List<User> otherUsers = userProfileRepository.findBySpotifyIdNot(spotifyId);
+
+        otherUsers.forEach(user -> {
+            try {
+                List<Map<String, Object>> topTracks = spotifyAuthService.getUserTopTracks(user.getAccessToken());
+                user.setTopTracks(topTracks);
+            } catch (Exception e) {
+                System.out.println("Failed to fetch top tracks for user: " + user.getSpotifyId());
+            }
+        });
+
+        return ResponseEntity.ok(otherUsers);
     }
 
 }

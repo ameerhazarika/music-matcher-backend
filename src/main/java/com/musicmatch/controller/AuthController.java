@@ -2,6 +2,7 @@ package com.musicmatch.controller;
 
 import com.musicmatch.model.User;
 import com.musicmatch.payload.response.JwtResponse;
+import com.musicmatch.repository.UserProfileRepository;
 import com.musicmatch.security.jwt.JwtUtils;
 import com.musicmatch.service.SpotifyAuthService;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -37,9 +39,11 @@ public class AuthController {
 
     private final SpotifyAuthService spotifyAuthService;
     private final JwtUtils jwtUtils;
-    public AuthController(SpotifyAuthService spotifyAuthService, JwtUtils jwtUtils) {
+    private final UserProfileRepository userProfileRepository;
+    public AuthController(SpotifyAuthService spotifyAuthService, JwtUtils jwtUtils,UserProfileRepository userProfileRepository) {
         this.spotifyAuthService = spotifyAuthService;
         this.jwtUtils = jwtUtils;
+        this.userProfileRepository=userProfileRepository;
     }
 
 
@@ -69,11 +73,14 @@ public class AuthController {
         try {
             logger.info("🔥 Inside /api/auth/callback with code: {}", code);
             User userProfile = spotifyAuthService.authenticateUser(code);
+            // Fetch and store top tracks for this user
+            spotifyAuthService.fetchAndSaveUserTopTracks(userProfile);
+           Optional<User> user = userProfileRepository.findBySpotifyId(userProfile.getSpotifyId());
             String jwt = jwtUtils.generateJwtFromSpotifyId(userProfile.getSpotifyId());
 
             String redirectUrl = UriComponentsBuilder
-                  .fromUriString("https://music-matcher-frontend.vercel.app/auth/callback") // Replace with your actual frontend URL in prod
-                   // .fromUriString("http://localhost:5173//auth/callback") // Replace with your actual frontend URL in prod
+                 .fromUriString("https://music-matcher-frontend.vercel.app/auth/callback") // Replace with your actual frontend URL in prod
+                   // .fromUriString("http://localhost:5173/auth/callback") // Replace with your actual frontend URL in prod
                     .queryParam("token", jwt)
                     .queryParam("displayName", URLEncoder.encode(userProfile.getDisplayName(),StandardCharsets.UTF_8))
                     .queryParam("email", userProfile.getEmail())
@@ -89,7 +96,8 @@ public class AuthController {
             logger.error("Authentication failed", e);
 
             String errorRedirect = UriComponentsBuilder
-                    .fromUriString("https://music-matcher-frontend.vercel.app/error")
+                   .fromUriString("https://music-matcher-frontend.vercel.app/error")
+                   // .fromUriString("http://localhost:5173/error")
                     .queryParam("message", URLEncoder.encode("Authentication failed", StandardCharsets.UTF_8))
                     .build(true)
                     .toUriString();
