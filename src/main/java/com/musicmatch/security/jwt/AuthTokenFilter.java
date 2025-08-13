@@ -39,7 +39,10 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
         try {
             String jwt = parseJwt(request);
+            logger.debug("JWT extracted: " + jwt);
             if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
+                boolean valid = jwtUtils.validateJwtToken(jwt);
+                logger.debug("Is JWT valid? " + valid);
                 String spotifyId = jwtUtils.getSpotifyIdFromJwt(jwt);
 
                 var userDetails = userDetailsService.loadUserByUsername(spotifyId);
