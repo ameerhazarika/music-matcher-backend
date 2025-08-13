@@ -30,6 +30,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String path = request.getRequestURI();
+        logger.debug("Incoming request to: " + path);
 
         // Skip filtering for public routes
         if (path.equals("/api/auth/login") || path.equals("/api/auth/callback")) {
@@ -39,23 +40,27 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
         try {
             String jwt = parseJwt(request);
-            logger.debug("JWT extracted: " + jwt);
-            if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
+            logger.debug("Authorization header: " + request.getHeader("Authorization"));
+            if (jwt != null) {
                 boolean valid = jwtUtils.validateJwtToken(jwt);
-                logger.debug("Is JWT valid? " + valid);
-                String spotifyId = jwtUtils.getSpotifyIdFromJwt(jwt);
+                logger.debug("Token valid? " + valid);
 
-                var userDetails = userDetailsService.loadUserByUsername(spotifyId);
+                if (valid) {
+                    String spotifyId = jwtUtils.getSpotifyIdFromJwt(jwt);
+                    var userDetails = userDetailsService.loadUserByUsername(spotifyId);
+                    logger.debug("Loaded user details: " + userDetails.getUsername() + ", authorities: " + userDetails.getAuthorities());
 
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails,
-                                null,
-                                userDetails.getAuthorities());
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails,
+                                    null,
+                                    userDetails.getAuthorities());
 
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            } else {
+                logger.debug("No JWT token found in request");
             }
         } catch (Exception e) {
             logger.error("Cannot set user authentication", e);
