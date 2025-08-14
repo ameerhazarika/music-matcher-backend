@@ -28,7 +28,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-
+        logger.warn("🔥 AuthTokenFilter triggered for path: " + request.getRequestURI());
+        logger.warn("🔥 Auth header in AuthTokenFilter: " + request.getHeader("Authorization"));
         String path = request.getRequestURI();
         logger.debug("Incoming request to: " + path);
 
@@ -43,7 +44,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             logger.debug("Authorization header: " + request.getHeader("Authorization"));
             if (jwt != null) {
                 boolean valid = jwtUtils.validateJwtToken(jwt);
-                logger.debug("Token valid? " + valid);
+                logger.debug("Token valid? REALLY REALLY VALID " + valid);
 
                 if (valid) {
                     String spotifyId = jwtUtils.getSpotifyIdFromJwt(jwt);
