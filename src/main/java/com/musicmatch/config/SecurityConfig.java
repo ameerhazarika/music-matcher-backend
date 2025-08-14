@@ -32,28 +32,12 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers(
-                                "/api/auth/login",
-                                "/api/auth/callback",
-                                "/oauth2/**"
-                        ).permitAll()
-                        // TEMP: explicitly allow discover for authenticated users without role checks
-                        .requestMatchers("/api/user/discover").authenticated()
+                        .requestMatchers("/api/auth/login", "/api/auth/callback", "/oauth2/**").permitAll()
                         .requestMatchers("/api/user/**").authenticated()
                         .anyRequest().authenticated()
-                )
-                .addFilterBefore((request, response, chain) -> {
-                    HttpServletRequest req = (HttpServletRequest) request;
-                    logger.debug("SecurityConfig: Request URI: {}", req.getRequestURI());
-                    logger.debug("SecurityConfig: Auth header: {}", req.getHeader("Authorization"));
-                    logger.debug("SecurityConfig: Current auth: {}",
-                            (org.springframework.security.core.Authentication)
-                                    org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication());
-                    chain.doFilter(request, response);
-                }, UsernamePasswordAuthenticationFilter.class);
+                );
 
         http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 

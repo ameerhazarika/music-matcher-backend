@@ -41,6 +41,12 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         logger.warn("🔥 Authorization header: " + request.getHeader("Authorization"));
         logger.warn("🔥 Request method: " + request.getMethod());
         logger.warn("🔥 Query string: " + request.getQueryString());
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod()) ||
+                path.equals("/api/auth/login") ||
+                path.equals("/api/auth/callback")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         try {
             String jwt = parseJwt(request);
