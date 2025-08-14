@@ -3,6 +3,8 @@ package com.musicmatch.controller;
 import com.musicmatch.model.User;
 import com.musicmatch.repository.UserProfileRepository;
 import com.musicmatch.service.SpotifyAuthService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
   //  @Autowired
    // private UserProfileRepository userProfileRepository;
@@ -60,9 +63,8 @@ public class UserController {
     }
     @GetMapping("/discover")
     public ResponseEntity<List<User>> getAllOtherUsers(Authentication authentication) {
+        logger.info("🔥 Inside /api/auth/callback with code: {}", authentication);
         String spotifyId = authentication.getName();
-        List<User> allUsers = userProfileRepository.findBySpotifyIdNot(spotifyId);
-
         List<User> otherUsers = userProfileRepository.findBySpotifyIdNot(spotifyId);
 
         otherUsers.forEach(user -> {
