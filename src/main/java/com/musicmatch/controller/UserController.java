@@ -62,7 +62,7 @@ public class UserController {
         }
     }
     @GetMapping("/discover")
-    public ResponseEntity<List<User>> getAllOtherUsers(Authentication authentication) {
+    public ResponseEntity<?> getAllOtherUsers(Authentication authentication) {
         logger.info("🔥 Inside /api/auth/callback with code: {}", authentication);
         String spotifyId = authentication.getName();
         List<User> otherUsers = userProfileRepository.findBySpotifyIdNot(spotifyId);
