@@ -37,7 +37,7 @@ public class UserController {
 //            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
 //        }
 //
-//        return ResponseEntity.ok(userOpt.get());
+//        return ResponseEntity.ok(userOpt.get());,
 //    }
 //    @GetMapping("/profile")
 //    public ResponseEntity<?> getUserProfile(Authentication authentication) {
@@ -83,22 +83,22 @@ public class UserController {
 //                    .body("Failed to fetch user profile");
 //        }
 //    }
-    @GetMapping("/profiles")
-    public ResponseEntity<?> getAllOtherUsers(Authentication authentication) {
-        logger.info("🔥 Inside /api/user/discover with code: {}", authentication);
-        String spotifyId = authentication.getName();
-        List<User> otherUsers = userProfileRepository.findBySpotifyIdNot(spotifyId);
-
-        otherUsers.forEach(user -> {
-            try {
-                List<Map<String, Object>> topTracks = spotifyAuthService.getUserTopTracks(user.getAccessToken());
-                user.setTopTracks(topTracks);
-            } catch (Exception e) {
-                System.out.println("Failed to fetch top tracks for user: " + user.getSpotifyId());
-            }
-        });
-
-        return ResponseEntity.ok(otherUsers);
-    }
+//    @GetMapping("/profiles")
+//    public ResponseEntity<?> getAllOtherUsers(Authentication authentication) {
+//        logger.info("🔥 Inside /api/user/discover with code: {}", authentication);
+//        String spotifyId = authentication.getName();
+//        List<User> otherUsers = userProfileRepository.findBySpotifyIdNot(spotifyId);
+//
+//        otherUsers.forEach(user -> {
+//            try {
+//                List<Map<String, Object>> topTracks = spotifyAuthService.getUserTopTracks(user.getAccessToken());
+//                user.setTopTracks(topTracks);
+//            } catch (Exception e) {
+//                System.out.println("Failed to fetch top tracks for user: " + user.getSpotifyId());
+//            }
+//        });
+//
+//        return ResponseEntity.ok(otherUsers);
+//    }
 
 }
