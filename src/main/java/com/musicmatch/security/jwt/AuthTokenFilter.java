@@ -26,30 +26,36 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private UserDetailsServiceImpl userDetailsService;
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        // Skip filtering for public routes
+        String path = request.getRequestURI();
+        return path.equals("/api/auth/login") || path.equals("/api/auth/callback");
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        logger.warn("🔥 AuthTokenFilter triggered for path: " + request.getRequestURI());
-        logger.warn("🔥 Auth header in AuthTokenFilter: " + request.getHeader("Authorization"));
-        String path = request.getRequestURI();
-        logger.debug("Incoming request to: " + path);
 
-        // Skip filtering for public routes
-        if (path.equals("/api/auth/login") || path.equals("/api/auth/callback")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+        String path = request.getRequestURI();
+        logger.warn("🔥 AuthTokenFilter triggered for path: " + path);
+        logger.warn("🔥 Authorization header: " + request.getHeader("Authorization"));
+        logger.warn("🔥 Request method: " + request.getMethod());
+        logger.warn("🔥 Query string: " + request.getQueryString());
 
         try {
             String jwt = parseJwt(request);
-            logger.debug("Authorization header: " + request.getHeader("Authorization"));
+
             if (jwt != null) {
+                logger.warn("✅ JWT token found: " + jwt);
+
                 boolean valid = jwtUtils.validateJwtToken(jwt);
-                logger.debug("Token valid? REALLY REALLY VALID " + valid);
+                logger.warn("✅ Token valid? " + valid);
 
                 if (valid) {
                     String spotifyId = jwtUtils.getSpotifyIdFromJwt(jwt);
                     var userDetails = userDetailsService.loadUserByUsername(spotifyId);
-                    logger.debug("Loaded user details: " + userDetails.getUsername() + ", authorities: " + userDetails.getAuthorities());
+
+                    logger.warn("✅ Loaded user details: " + userDetails.getUsername() + ", authorities: " + userDetails.getAuthorities());
 
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(
@@ -59,12 +65,13 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authentication);
+                    logger.warn("✅ Authentication set in SecurityContextHolder for: " + spotifyId);
                 }
             } else {
-                logger.debug("No JWT token found in request");
+                logger.warn("🚨 No JWT token found in request");
             }
         } catch (Exception e) {
-            logger.error("Cannot set user authentication", e);
+            logger.error("❌ Cannot set user authentication", e);
         }
 
         filterChain.doFilter(request, response);
@@ -72,11 +79,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
     private String parseJwt(HttpServletRequest request) {
         String headerAuth = request.getHeader("Authorization");
-
         if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
             return headerAuth.substring(7);
         }
-
         return null;
     }
 }
