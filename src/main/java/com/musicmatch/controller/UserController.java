@@ -39,66 +39,66 @@ public class UserController {
 //
 //        return ResponseEntity.ok(userOpt.get());
 //    }
-    @GetMapping("/profile")
-    public ResponseEntity<?> getUserProfile(Authentication authentication) {
-        try {
-            String spotifyId = authentication.getName(); // Extract from JWT
-            Optional<User>user = userProfileRepository.findBySpotifyId(spotifyId);
-            if (user.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-             }
-            // Fetch top tracks from Spotify API using stored access token
-            User actualUser = user.get(); // ✅ Extract user from Optional
-            List<Map<String, Object>> topTracks = spotifyAuthService.getUserTopTracks(actualUser.getAccessToken());
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("user", actualUser);
-            response.put("topTracks", topTracks);
-
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to fetch user profile");
-        }
-    }
-    @GetMapping("/discover")
-    public ResponseEntity<?> getAllOtherUsers(Authentication authentication) {
-        try {
-            String spotifyId = authentication.getName(); // Extract from JWT
-            Optional<User>user = userProfileRepository.findBySpotifyId(spotifyId);
-            if (user.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-            }
-            // Fetch top tracks from Spotify API using stored access token
-            User actualUser = user.get(); // ✅ Extract user from Optional
-            List<Map<String, Object>> topTracks = spotifyAuthService.getUserTopTracks(actualUser.getAccessToken());
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("user", actualUser);
-            response.put("topTracks", topTracks);
-
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to fetch user profile");
-        }
-    }
+//    @GetMapping("/profile")
+//    public ResponseEntity<?> getUserProfile(Authentication authentication) {
+//        try {
+//            String spotifyId = authentication.getName(); // Extract from JWT
+//            Optional<User>user = userProfileRepository.findBySpotifyId(spotifyId);
+//            if (user.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+//             }
+//            // Fetch top tracks from Spotify API using stored access token
+//            User actualUser = user.get(); // ✅ Extract user from Optional
+//            List<Map<String, Object>> topTracks = spotifyAuthService.getUserTopTracks(actualUser.getAccessToken());
+//
+//            Map<String, Object> response = new HashMap<>();
+//            response.put("user", actualUser);
+//            response.put("topTracks", topTracks);
+//
+//            return ResponseEntity.ok(response);
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body("Failed to fetch user profile");
+//        }
+//    }
 //    @GetMapping("/discover")
 //    public ResponseEntity<?> getAllOtherUsers(Authentication authentication) {
-//        logger.info("🔥 Inside /api/auth/callback with code: {}", authentication);
-//        String spotifyId = authentication.getName();
-//        List<User> otherUsers = userProfileRepository.findBySpotifyIdNot(spotifyId);
-//
-//        otherUsers.forEach(user -> {
-//            try {
-//                List<Map<String, Object>> topTracks = spotifyAuthService.getUserTopTracks(user.getAccessToken());
-//                user.setTopTracks(topTracks);
-//            } catch (Exception e) {
-//                System.out.println("Failed to fetch top tracks for user: " + user.getSpotifyId());
+//        try {
+//            String spotifyId = authentication.getName(); // Extract from JWT
+//            Optional<User>user = userProfileRepository.findBySpotifyId(spotifyId);
+//            if (user.isEmpty()) {
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
 //            }
-//        });
+//            // Fetch top tracks from Spotify API using stored access token
+//            User actualUser = user.get(); // ✅ Extract user from Optional
+//            List<Map<String, Object>> topTracks = spotifyAuthService.getUserTopTracks(actualUser.getAccessToken());
 //
-//        return ResponseEntity.ok(otherUsers);
+//            Map<String, Object> response = new HashMap<>();
+//            response.put("user", actualUser);
+//            response.put("topTracks", topTracks);
+//
+//            return ResponseEntity.ok(response);
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body("Failed to fetch user profile");
+//        }
 //    }
+    @GetMapping("/profile")
+    public ResponseEntity<?> getAllOtherUsers(Authentication authentication) {
+        logger.info("🔥 Inside /api/user/discover with code: {}", authentication);
+        String spotifyId = authentication.getName();
+        List<User> otherUsers = userProfileRepository.findBySpotifyIdNot(spotifyId);
+
+        otherUsers.forEach(user -> {
+            try {
+                List<Map<String, Object>> topTracks = spotifyAuthService.getUserTopTracks(user.getAccessToken());
+                user.setTopTracks(topTracks);
+            } catch (Exception e) {
+                System.out.println("Failed to fetch top tracks for user: " + user.getSpotifyId());
+            }
+        });
+
+        return ResponseEntity.ok(otherUsers);
+    }
 
 }
