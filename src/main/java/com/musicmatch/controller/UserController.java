@@ -83,7 +83,7 @@ public class UserController {
 //                    .body("Failed to fetch user profile");
 //        }
 //    }
-    @GetMapping("/profile")
+    @GetMapping("/profiles")
     public ResponseEntity<?> getAllOtherUsers(Authentication authentication) {
         logger.info("🔥 Inside /api/user/discover with code: {}", authentication);
         String spotifyId = authentication.getName();
