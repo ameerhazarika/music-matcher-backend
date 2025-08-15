@@ -1,23 +1,31 @@
-FROM eclipse-temurin:17-jdk
+FROM eclipse-temurin:17-jdk AS build
 
 WORKDIR /app
 
-# Copy Maven wrapper & pom first to leverage caching
+# Copy Maven wrapper & config first for dependency caching
 COPY mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
 
-# Give execute permission to mvnw
+# Ensure mvnw is executable
 RUN chmod +x mvnw
 
-# Download dependencies
+# Download dependencies (speeds up future builds)
 RUN ./mvnw dependency:go-offline
 
 # Copy source code
 COPY src ./src
 
-# Build the app
+# Build the JAR
 RUN ./mvnw clean package -DskipTests
 
-# Run the jar
-ENTRYPOINT ["java", "-jar", "target/*.jar"]
+# ---------- Runtime Stage ----------
+FROM eclipse-temurin:17-jdk
+
+WORKDIR /app
+
+# Copy built JAR from build stage
+COPY --from=build /app/target/*.jar app.jar
+
+# Run the app
+ENTRYPOINT ["java", "-jar", "app.jar"]
