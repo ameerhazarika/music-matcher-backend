@@ -2,12 +2,15 @@ FROM eclipse-temurin:17-jdk
 
 WORKDIR /app
 
-# Copy Maven wrapper & pom first to leverage Docker layer caching for dependencies
+# Copy Maven wrapper & pom first to leverage caching
 COPY mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
 
-# Download dependencies (cached if pom.xml unchanged)
+# Give execute permission to mvnw
+RUN chmod +x mvnw
+
+# Download dependencies
 RUN ./mvnw dependency:go-offline
 
 # Copy source code
